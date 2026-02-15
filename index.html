@@ -646,6 +646,8 @@ function soltar(e, index){
 function verProducto(i){
 
 let p = productos[i];
+productoActual = p;
+fotoActual = 0;
 
 let visor = document.getElementById("visorProducto");
 let imgVisor = document.getElementById("imgVisor");
@@ -660,42 +662,41 @@ document.body.style.overflow = "hidden";
 
 imgVisor.src = p.fotos?.[0] || "";
 
-fotoActual = 0;
+let fotoActual = 0;
+let productoActual = null;
+
 function fotoSiguiente(){
 
-let p = productos.find(prod => prod.nombre === 
-document.getElementById("nombreVisor").innerText);
-
-if(!p || !p.fotos) return;
+if(!productoActual || !productoActual.fotos) return;
 
 fotoActual++;
 
-if(fotoActual >= p.fotos.length){
+if(fotoActual >= productoActual.fotos.length){
 fotoActual = 0;
 }
 
-document.getElementById("imgVisor").src = p.fotos[fotoActual];
+document.getElementById("imgVisor").src =
+productoActual.fotos[fotoActual];
 
 }
 
 function fotoAnterior(){
 
-let p = productos.find(prod => prod.nombre === 
-document.getElementById("nombreVisor").innerText);
-
-if(!p || !p.fotos) return;
+if(!productoActual || !productoActual.fotos) return;
 
 fotoActual--;
 
 if(fotoActual < 0){
-fotoActual = p.fotos.length - 1;
+fotoActual = productoActual.fotos.length - 1;
 }
 
-document.getElementById("imgVisor").src = p.fotos[fotoActual];
+document.getElementById("imgVisor").src =
+productoActual.fotos[fotoActual];
 
 }
 
-activarSwipe(p.fotos);
+
+activarSwipe(productoActual.fotos);
 nombreVisor.innerText = p.nombre;
 
 if(p.precioOferta){
