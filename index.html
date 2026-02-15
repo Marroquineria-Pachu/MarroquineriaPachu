@@ -332,6 +332,27 @@ padding:8px 15px;
   height: 60px;
 }
 
+/* 📱 CELULAR */
+
+@media (max-width:600px){
+
+.productos{
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+padding:12px;
+}
+
+.card img{
+height:180px;
+}
+
+.card p{
+font-size:18px;
+}
+
+}
+
+
 </style>
 </head>
 
@@ -430,6 +451,34 @@ onclick="abrirCarrito()">
 </div>
 
 <script type="module">
+
+function comprimirImagen(base64, maxWidth = 800, calidad = 0.7){
+
+return new Promise(resolve => {
+
+let img = new Image();
+img.src = base64;
+
+img.onload = () => {
+
+let canvas = document.createElement("canvas");
+let ctx = canvas.getContext("2d");
+
+let ratio = img.width / img.height;
+
+canvas.width = maxWidth;
+canvas.height = maxWidth / ratio;
+
+ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+resolve(canvas.toDataURL("image/jpeg", calidad));
+
+};
+
+});
+
+}
+
 
 // 🔥 IMPORTS FIREBASE
 import { initializeApp } 
@@ -634,32 +683,23 @@ b.focus();
 
 function agregarProducto(){
 
-let files=fotos.files;
-let fotosArray=[];
-
-let cargadas=0;
-
-for(let file of files){
-let reader=new FileReader();
-
-reader.onload=e=>{
-fotosArray.push(e.target.result);
-cargadas++;
-
-if(cargadas==files.length){
-guardarProducto(fotosArray);
+if(fotosPreview.length === 0){
+guardarProducto([]);
+return;
 }
 
-};
+guardarProducto(fotosPreview);
 
-reader.readAsDataURL(file);
-
-}
-
-if(files.length==0) guardarProducto([]);
 }
 
 async function guardarProducto(fotosArray){
+
+let fotosComprimidas = [];
+
+for(let f of fotosArray){
+  let comprimida = await comprimirImagen(f);
+  fotosComprimidas.push(comprimida);
+}
 
 let producto = {
   nombre: document.getElementById("nombre").value,
@@ -669,7 +709,7 @@ let producto = {
       : null,
   categoria: document.getElementById("categoria").value,
   descripcion: document.getElementById("descripcion").value,
-  fotos: fotosArray
+  fotos: fotosComprimidas
 };
 
 await addDoc(collection(db, "productos"), producto);
@@ -678,7 +718,6 @@ alert("Producto guardado en la nube ✅");
 
 cargarProductos();
 }
-
 
 
 function mostrarProductos(){
