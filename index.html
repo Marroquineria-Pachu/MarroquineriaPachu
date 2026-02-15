@@ -937,16 +937,13 @@ async function borrarProducto(i){
 }
 
 
+
 async function editarProducto(i){
 
 let p = productos[i];
 
 // editar categoria
-let nuevaCategoria = prompt(
-"Categoría:",
-p.categoria
-);
-
+let nuevaCategoria = prompt("Categoría:", p.categoria);
 if(nuevaCategoria === null) return;
 
 // editar precio
@@ -966,19 +963,21 @@ p.descripcion || ""
 );
 
 
-// 🔥 EDITAR FOTOS
-let editarFotos = confirm("¿Querés cambiar las fotos?");
+// 🔥 MANEJO DE FOTOS
+let accionFotos = confirm(
+"OK = Agregar fotos nuevas\nCancelar = Mantener fotos actuales"
+);
 
-let nuevasFotos = p.fotos;
+let nuevasFotos = [...(p.fotos || [])];
 
-if(editarFotos){
+if(accionFotos){
 
 let input = document.createElement("input");
 input.type = "file";
 input.multiple = true;
 input.accept = "image/*";
 
-input.onchange = function(){
+input.onchange = async function(){
 
 let archivos = input.files;
 let lectorPromesas = [];
@@ -1001,9 +1000,10 @@ reader.readAsDataURL(file);
 
 }
 
-Promise.all(lectorPromesas).then(async fotosBase64 => {
+let fotosNuevas = await Promise.all(lectorPromesas);
 
-nuevasFotos = fotosBase64;
+// 👉 agrega sin borrar las viejas
+nuevasFotos = nuevasFotos.concat(fotosNuevas);
 
 await updateDoc(doc(db, "productos", p.id), {
 categoria: nuevaCategoria,
@@ -1016,13 +1016,14 @@ fotos: nuevasFotos
 alert("Producto actualizado ✅");
 cargarProductos();
 
-});
+};
 
+input.click();
 return;
-
 }
 
-// si no edita fotos
+
+// si no toca fotos
 await updateDoc(doc(db, "productos", p.id), {
 categoria: nuevaCategoria,
 precio: Number(nuevoPrecio),
