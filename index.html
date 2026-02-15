@@ -630,6 +630,9 @@ visor.style.display = "flex";
 document.body.style.overflow = "hidden";
 
 imgVisor.src = p.fotos?.[0] || "";
+
+fotoActual = 0;
+activarSwipe(p.fotos);
 nombreVisor.innerText = p.nombre;
 
 if(p.precioOferta){
@@ -672,6 +675,46 @@ document.body.style.overflow = "auto"; // 🔥 ESTA LINEA
 }
 
 let carrito=JSON.parse(localStorage.getItem("carrito"))||[];
+let touchStartX = 0;
+let touchEndX = 0;
+let fotoActual = 0;
+
+function activarSwipe(fotos){
+
+const img = document.getElementById("imgVisor");
+
+img.addEventListener("touchstart", e=>{
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+img.addEventListener("touchend", e=>{
+    touchEndX = e.changedTouches[0].screenX;
+    manejarSwipe(fotos);
+});
+
+}
+
+function manejarSwipe(fotos){
+
+if(!fotos || fotos.length <= 1) return;
+
+if(touchStartX - touchEndX > 50){
+    // swipe izquierda → siguiente
+    fotoActual++;
+}
+
+if(touchEndX - touchStartX > 50){
+    // swipe derecha → anterior
+    fotoActual--;
+}
+
+if(fotoActual < 0) fotoActual = fotos.length - 1;
+if(fotoActual >= fotos.length) fotoActual = 0;
+
+document.getElementById("imgVisor").src = fotos[fotoActual];
+
+}
+
 let esAdmin = false;
 
 
@@ -724,8 +767,8 @@ cont.innerHTML="";
 productos.forEach((p,i)=>{
 
 cont.innerHTML+=`
-<div class="card">
-<img src="${p.fotos?.[0] || ''}" onclick="verProducto(${i})">
+<div class="card" onclick="verProducto(${i})">
+<img src="${p.fotos?.[0] || ''}">
 <h3>${p.nombre}</h3>
 ${p.precioOferta ? `
 <p style="text-decoration:line-through;color:gray;">
@@ -740,7 +783,7 @@ $${p.precio}
 }
 
 
-<button class="btn-agregar" onclick="agregarCarrito(${i})">
+<button class="btn-agregar" onclick="event.stopPropagation(); agregarCarrito(${i})">
 🛒 Agregar al carrito
 </button>
 ${esAdmin ? `
