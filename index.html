@@ -791,6 +791,18 @@ b.focus();
 
 function agregarProducto(){
 
+// 🔥 VALIDAR NOMBRE
+if(!document.getElementById("nombre").value){
+alert("Poné un nombre al producto");
+return;
+}
+
+// 🔥 VALIDAR PRECIO
+if(!document.getElementById("precio").value){
+alert("Poné un precio");
+return;
+}
+
 if(fotosPreview.length === 0){
 guardarProducto([]);
 return;
@@ -809,7 +821,7 @@ let producto = {
   precioOferta: document.getElementById("precioOferta").value 
       ? Number(document.getElementById("precioOferta").value)
       : null,
-  categoria: document.getElementById("categoria").value,
+  categoria: document.getElementById("categoria").value.toLowerCase().trim(),
   descripcion: document.getElementById("descripcion").value,
   fotos: fotosArray
 };
@@ -819,6 +831,15 @@ await addDoc(collection(db, "productos"), producto);
 alert("Producto guardado en la nube ✅");
 
 cargarProductos();
+
+// 🔥 limpiar formulario
+document.getElementById("nombre").value="";
+document.getElementById("precio").value="";
+document.getElementById("precioOferta").value="";
+document.getElementById("descripcion").value="";
+document.getElementById("fotos").value="";
+fotosPreview=[];
+mostrarPreview();
 }
 
 
@@ -942,75 +963,61 @@ async function editarProducto(i){
 
 let p = productos[i];
 
-// editar categoria
 let nuevaCategoria = prompt("Categoría:", p.categoria);
 if(nuevaCategoria === null) return;
 
-// editar precio
-let nuevoPrecio = prompt("Nuevo precio:", p.precio);
+let nuevoPrecio = prompt("Precio:", p.precio);
 if(nuevoPrecio === null) return;
 
-// editar oferta
-let nuevaOferta = prompt(
-"Nuevo precio oferta (vacío para quitar):",
-p.precioOferta || ""
-);
-
-// editar descripcion
 let nuevaDescripcion = prompt(
-"Nueva descripción:",
+"Descripción:",
 p.descripcion || ""
 );
 
 
-// 🔥 MANEJO DE FOTOS
-let accionFotos = confirm(
-"OK = Agregar fotos nuevas\nCancelar = Mantener fotos actuales"
-);
-
-let nuevasFotos = [...(p.fotos || [])];
-
-if(accionFotos){
-
+// 👉 selector real de fotos
 let input = document.createElement("input");
 input.type = "file";
 input.multiple = true;
 input.accept = "image/*";
 
+let quiereFotos = confirm(
+"¿Querés agregar fotos nuevas?\nOK = SI\nCancelar = NO"
+);
+
+if(quiereFotos){
+
 input.onchange = async function(){
 
-let archivos = input.files;
-let lectorPromesas = [];
+let nuevasFotos = [...(p.fotos || [])];
 
-for(let file of archivos){
+for(let file of input.files){
 
 if(file.size > 1500000){
-alert("Una imagen pesa demasiado (máx 1.5MB)");
+alert("Imagen muy pesada");
 continue;
 }
 
-lectorPromesas.push(new Promise(resolve => {
-
 let reader = new FileReader();
 
-reader.onload = e => resolve(e.target.result);
+await new Promise(resolve=>{
+reader.onload = e=>{
+nuevasFotos.push(e.target.result);
+resolve();
+};
 reader.readAsDataURL(file);
-
-}));
+});
 
 }
 
-let fotosNuevas = await Promise.all(lectorPromesas);
+await updateDoc(doc(db,"productos",p.id),{
 
-// 👉 agrega sin borrar las viejas
-nuevasFotos = nuevasFotos.concat(fotosNuevas);
-
-await updateDoc(doc(db, "productos", p.id), {
-categoria: nuevaCategoria,
+categoria: nuevaCategoria.toLowerCase().trim(),
 precio: Number(nuevoPrecio),
-precioOferta: nuevaOferta || null,
+precioOferta: p.precioOferta || null,
 descripcion: nuevaDescripcion,
 fotos: nuevasFotos
+
 });
 
 alert("Producto actualizado ✅");
@@ -1019,20 +1026,21 @@ cargarProductos();
 };
 
 input.click();
-return;
-}
 
+}else{
 
-// si no toca fotos
-await updateDoc(doc(db, "productos", p.id), {
-categoria: nuevaCategoria,
+await updateDoc(doc(db,"productos",p.id),{
+
+categoria: nuevaCategoria.toLowerCase().trim(),
 precio: Number(nuevoPrecio),
-precioOferta: nuevaOferta || null,
 descripcion: nuevaDescripcion
+
 });
 
 alert("Producto actualizado ✅");
 cargarProductos();
+
+}
 
 }
 
@@ -1074,15 +1082,18 @@ cargarProductos();
 
 
 function filtrarCategoria(cat){
+
 let cont=document.getElementById("productos");
 cont.innerHTML="";
 
 productos.forEach((p,i)=>{
-if(cat=="Todos" || p.categoria==cat){
+
+if(cat=="Todos" || p.categoria?.toLowerCase().trim() == cat.toLowerCase()){
 cont.innerHTML+=`
-<div class="card">
-<img src="${p.fotos?.[0] || ''}" onclick="verProducto(${i})">
+<div class="card" onclick="verProducto(${i})">
+<img src="${p.fotos?.[0] || ''}">
 <h3>${p.nombre}</h3>
+
 ${p.precioOferta ? `
 <p style="text-decoration:line-through;color:gray;">
 $${p.precio}
@@ -1090,15 +1101,18 @@ $${p.precio}
 <p style="color:red;font-weight:bold;font-size:22px;">
 🔥 $${p.precioOferta}
 </p>
-` 
+`
 :
 `<p>$${p.precio}</p>`}
-<button class="btn-agregar" onclick="agregarCarrito(${i})">
+
+<button class="btn-agregar" onclick="event.stopPropagation(); agregarCarrito(${i})">
 🛒 Agregar al carrito
 </button>
+
 </div>
 `;
 }
+
 });
 }
 
