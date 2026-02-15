@@ -646,6 +646,7 @@ function soltar(e, index){
 function verProducto(i){
 
 let p = productos[i];
+
 productoActual = p;
 fotoActual = 0;
 
@@ -662,12 +663,47 @@ document.body.style.overflow = "hidden";
 
 imgVisor.src = p.fotos?.[0] || "";
 
-let fotoActual = 0;
-let productoActual = null;
+activarSwipe(p.fotos);
+
+nombreVisor.innerText = p.nombre;
+
+if(p.precioOferta){
+precioVisor.innerHTML = `
+<span style="text-decoration:line-through;color:gray;font-size:18px;">
+$${p.precio}
+</span>
+<br>
+<span style="color:red;font-weight:bold;">
+🔥 $${p.precioOferta}
+</span>
+`;
+}else{
+precioVisor.innerText = "$" + p.precio;
+}
+
+descripcionVisor.innerText = p.descripcion || "";
+
+let mini = "";
+
+(p.fotos || []).forEach((f,index)=>{
+mini += `
+<img src="${f}" 
+style="width:60px;height:60px;object-fit:cover;cursor:pointer"
+onclick="cambiarFoto(${index})">
+`;
+});
+
+miniaturas.innerHTML = mini;
+
+btnAgregarVisor.onclick = function(){
+agregarCarrito(i);
+};
+
+}
 
 function fotoSiguiente(){
 
-if(!productoActual || !productoActual.fotos) return;
+if(!productoActual?.fotos) return;
 
 fotoActual++;
 
@@ -682,7 +718,7 @@ productoActual.fotos[fotoActual];
 
 function fotoAnterior(){
 
-if(!productoActual || !productoActual.fotos) return;
+if(!productoActual?.fotos) return;
 
 fotoActual--;
 
@@ -693,6 +729,12 @@ fotoActual = productoActual.fotos.length - 1;
 document.getElementById("imgVisor").src =
 productoActual.fotos[fotoActual];
 
+}
+
+function cambiarFoto(index){
+fotoActual = index;
+document.getElementById("imgVisor").src =
+productoActual.fotos[index];
 }
 
 
@@ -739,6 +781,8 @@ document.body.style.overflow = "auto"; // 🔥 ESTA LINEA
 }
 
 let carrito=JSON.parse(localStorage.getItem("carrito"))||[];
+let productoActual = null;
+let fotoActual = 0;
 let touchStartX = 0;
 let touchEndX = 0;
 let fotoActual = 0;
@@ -1066,6 +1110,10 @@ window.cerrarVisor = cerrarVisor;
 window.editarProducto = editarProducto;
 window.borrarProducto = borrarProducto;
 window.enviarPedido = enviarPedido;
+window.fotoAnterior = fotoAnterior;
+window.fotoSiguiente = fotoSiguiente;
+window.cambiarFoto = cambiarFoto;
+
 
 
 console.log("Script cargado correctamente");
