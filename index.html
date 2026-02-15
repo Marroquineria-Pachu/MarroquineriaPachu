@@ -7,12 +7,6 @@
 
 <style>
 
-.logoHeader{
-height:90px;
-max-width:100%;
-object-fit:contain;
-}
-
 .preview-img{
 width:80px;
 height:80px;
@@ -95,16 +89,10 @@ color:white;
 justify-self:start;
 }
 
-.logoHeader{
-justify-self:center;
-}
-
 .carritoBox{
 justify-self:end;
 }
 
-
-.logoHeader{height:120px;}
 
 .iconHeader{
 width:26px;
@@ -547,7 +535,7 @@ preview.innerHTML = "";
 
 for(let file of this.files){
 
-if(file.size > 800000){
+if(file.size > 1500000){
 alert("La imagen pesa demasiado. Máximo 1.5MB");
 continue;
 }
@@ -700,6 +688,15 @@ agregarCarrito(i);
 
 }
 
+function cerrarVisor(){
+document.getElementById("visorProducto").style.display="none";
+document.body.style.overflow = "auto"; // 🔥 ESTA LINEA
+}
+
+let carrito=JSON.parse(localStorage.getItem("carrito"))||[];
+let productoActual = null;
+let fotoActual = 0;
+
 function fotoSiguiente(){
 
 if(!productoActual?.fotos) return;
@@ -736,17 +733,6 @@ document.getElementById("imgVisor").src =
 productoActual.fotos[index];
 }
 
-
-}
-
-function cerrarVisor(){
-document.getElementById("visorProducto").style.display="none";
-document.body.style.overflow = "auto"; // 🔥 ESTA LINEA
-}
-
-let carrito=JSON.parse(localStorage.getItem("carrito"))||[];
-let productoActual = null;
-let fotoActual = 0;
 let touchStartX = 0;
 let touchEndX = 0;
 
