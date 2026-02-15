@@ -939,30 +939,100 @@ async function borrarProducto(i){
 
 async function editarProducto(i){
 
-  let nuevoPrecio = prompt("Nuevo precio:", productos[i].precio);
-  if(nuevoPrecio === null) return;
+let p = productos[i];
 
-  let nuevaOferta = prompt(
-    "Nuevo precio oferta (dejar vacío para quitar oferta):",
-    productos[i].precioOferta || ""
-  );
+// editar categoria
+let nuevaCategoria = prompt(
+"Categoría:",
+p.categoria
+);
 
-  let nuevaDescripcion = prompt(
-    "Nueva descripción:",
-    productos[i].descripcion || ""
-  );
+if(nuevaCategoria === null) return;
 
-  const id = productos[i].id; // 👈 ID del documento en Firebase
+// editar precio
+let nuevoPrecio = prompt("Nuevo precio:", p.precio);
+if(nuevoPrecio === null) return;
 
-  await updateDoc(doc(db, "productos", id), {
-    precio: nuevoPrecio,
-    precioOferta: nuevaOferta || null,
-    descripcion: nuevaDescripcion
-  });
+// editar oferta
+let nuevaOferta = prompt(
+"Nuevo precio oferta (vacío para quitar):",
+p.precioOferta || ""
+);
 
-  alert("Producto actualizado ✅");
+// editar descripcion
+let nuevaDescripcion = prompt(
+"Nueva descripción:",
+p.descripcion || ""
+);
 
-  cargarProductos();
+
+// 🔥 EDITAR FOTOS
+let editarFotos = confirm("¿Querés cambiar las fotos?");
+
+let nuevasFotos = p.fotos;
+
+if(editarFotos){
+
+let input = document.createElement("input");
+input.type = "file";
+input.multiple = true;
+input.accept = "image/*";
+
+input.onchange = function(){
+
+let archivos = input.files;
+let lectorPromesas = [];
+
+for(let file of archivos){
+
+if(file.size > 1500000){
+alert("Una imagen pesa demasiado (máx 1.5MB)");
+continue;
+}
+
+lectorPromesas.push(new Promise(resolve => {
+
+let reader = new FileReader();
+
+reader.onload = e => resolve(e.target.result);
+reader.readAsDataURL(file);
+
+}));
+
+}
+
+Promise.all(lectorPromesas).then(async fotosBase64 => {
+
+nuevasFotos = fotosBase64;
+
+await updateDoc(doc(db, "productos", p.id), {
+categoria: nuevaCategoria,
+precio: Number(nuevoPrecio),
+precioOferta: nuevaOferta || null,
+descripcion: nuevaDescripcion,
+fotos: nuevasFotos
+});
+
+alert("Producto actualizado ✅");
+cargarProductos();
+
+});
+
+return;
+
+}
+
+// si no edita fotos
+await updateDoc(doc(db, "productos", p.id), {
+categoria: nuevaCategoria,
+precio: Number(nuevoPrecio),
+precioOferta: nuevaOferta || null,
+descripcion: nuevaDescripcion
+});
+
+alert("Producto actualizado ✅");
+cargarProductos();
+
 }
 
 
