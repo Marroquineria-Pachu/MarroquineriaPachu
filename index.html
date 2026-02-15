@@ -982,12 +982,12 @@ window.open(`https://wa.me/5491150649868?text=${texto}`, "_blank");
 
 function buscarProducto(){
 
-let texto=buscador.value.toLowerCase();
-let cards=document.querySelectorAll(".card");
+let texto = document.getElementById("buscador").value.toLowerCase();
+let cards = document.querySelectorAll(".card");
 
 cards.forEach(c=>{
-c.style.display=c.innerText.toLowerCase().includes(texto)
-?"block":"none";
+c.style.display = c.innerText.toLowerCase().includes(texto)
+? "block" : "none";
 });
 }
 
