@@ -334,6 +334,37 @@ padding:8px 15px;
   padding: 15px;
 }
 
+/* ===== RESPONSIVE CELULAR ===== */
+
+@media (max-width:768px){
+
+.productos{
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+padding:12px;
+}
+
+.card img{
+height:180px;
+}
+
+.card p{
+font-size:22px;
+}
+
+.logoHeader{
+height:70px;
+}
+
+}
+
+#visorProducto img{
+max-width:95vw;
+max-height:65vh;
+object-fit:contain;
+}
+
+
 </style>
 </head>
 
@@ -475,14 +506,10 @@ preview.innerHTML = "";
 
 for(let file of this.files){
 
-let reader = new FileReader();
-
-reader.onload = function(e){
-
-fotosPreview.push(e.target.result);
-mostrarPreview();
-
-};
+if(file.size > 1500000){
+alert("La imagen pesa demasiado. Máximo 1.5MB");
+continue;
+}
 
 reader.readAsDataURL(file);
 
@@ -953,14 +980,20 @@ style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);justify-con
 <div style="background:white;padding:20px;border-radius:12px;width:90%;max-width:900px; position:relative;">
 <button onclick="cerrarVisor()" 
 style="
-position:absolute;
-top:10px;
-right:10px;
-background:none;
+position:fixed;
+top:15px;
+right:15px;
+background:white;
 border:none;
-font-size:24px;
+font-size:26px;
+border-radius:50%;
+width:40px;
+height:40px;
 cursor:pointer;
+z-index:10000;
 ">
+✖
+</button>
 ✖
 </button>
 <img id="imgVisor" style="width:100%;max-height:55vh;object-fit:contain;border-radius:10px;">
