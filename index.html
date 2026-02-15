@@ -340,12 +340,6 @@ padding:8px 15px;
 }
 
 
-.headerTienda {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-}
 
 /* ===== RESPONSIVE CELULAR ===== */
 
@@ -404,6 +398,11 @@ left:10px;
 
 #flechaDer{
 right:10px;
+}
+
+#visorProducto > div{
+max-height:90vh;
+overflow:auto;
 }
 
 
@@ -548,7 +547,7 @@ preview.innerHTML = "";
 
 for(let file of this.files){
 
-if(file.size > 1500000){
+if(file.size > 800000){
 alert("La imagen pesa demasiado. Máximo 1.5MB");
 continue;
 }
@@ -738,41 +737,6 @@ productoActual.fotos[index];
 }
 
 
-activarSwipe(productoActual.fotos);
-nombreVisor.innerText = p.nombre;
-
-if(p.precioOferta){
-  precioVisor.innerHTML = `
-    <span style="text-decoration:line-through;color:gray;font-size:18px;">
-      $${p.precio}
-    </span>
-    <br>
-    <span style="color:red;font-weight:bold;">
-      🔥 $${p.precioOferta}
-    </span>
-  `;
-}else{
-  precioVisor.innerText = "$" + p.precio;
-}
-
-descripcionVisor.innerText = p.descripcion || "";
-
-let mini = "";
-
-(p.fotos || []).forEach(f=>{
-  mini += `
-    <img src="${f}" 
-      style="width:60px;height:60px;object-fit:cover;cursor:pointer"
-      onclick="document.getElementById('imgVisor').src='${f}'">
-  `;
-});
-
-miniaturas.innerHTML = mini;
-
-btnAgregarVisor.onclick = function(){
-  agregarCarrito(i);
-};
-
 }
 
 function cerrarVisor(){
@@ -785,20 +749,19 @@ let productoActual = null;
 let fotoActual = 0;
 let touchStartX = 0;
 let touchEndX = 0;
-let fotoActual = 0;
 
 function activarSwipe(fotos){
 
 const img = document.getElementById("imgVisor");
 
-img.addEventListener("touchstart", e=>{
+img.ontouchstart = e=>{
     touchStartX = e.changedTouches[0].screenX;
-});
+};
 
-img.addEventListener("touchend", e=>{
+img.ontouchend = e=>{
     touchEndX = e.changedTouches[0].screenX;
     manejarSwipe(fotos);
-});
+};
 
 }
 
