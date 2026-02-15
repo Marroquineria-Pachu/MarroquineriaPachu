@@ -377,6 +377,35 @@ max-height:65vh;
 object-fit:contain;
 }
 
+.flechaVisor{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+background:rgba(0,0,0,.5);
+color:white;
+border:none;
+font-size:28px;
+width:45px;
+height:45px;
+border-radius:50%;
+cursor:pointer;
+z-index:10000;
+transition:.2s;
+}
+
+.flechaVisor:hover{
+background:black;
+transform:translateY(-50%) scale(1.1);
+}
+
+#flechaIzq{
+left:10px;
+}
+
+#flechaDer{
+right:10px;
+}
+
 
 </style>
 </head>
@@ -632,6 +661,40 @@ document.body.style.overflow = "hidden";
 imgVisor.src = p.fotos?.[0] || "";
 
 fotoActual = 0;
+function fotoSiguiente(){
+
+let p = productos.find(prod => prod.nombre === 
+document.getElementById("nombreVisor").innerText);
+
+if(!p || !p.fotos) return;
+
+fotoActual++;
+
+if(fotoActual >= p.fotos.length){
+fotoActual = 0;
+}
+
+document.getElementById("imgVisor").src = p.fotos[fotoActual];
+
+}
+
+function fotoAnterior(){
+
+let p = productos.find(prod => prod.nombre === 
+document.getElementById("nombreVisor").innerText);
+
+if(!p || !p.fotos) return;
+
+fotoActual--;
+
+if(fotoActual < 0){
+fotoActual = p.fotos.length - 1;
+}
+
+document.getElementById("imgVisor").src = p.fotos[fotoActual];
+
+}
+
 activarSwipe(p.fotos);
 nombreVisor.innerText = p.nombre;
 
@@ -1060,6 +1123,8 @@ z-index:10000;
 ✖
 </button>
 <img id="imgVisor" style="width:100%;max-height:55vh;object-fit:contain;border-radius:10px;">
+<button id="flechaIzq" class="flechaVisor" onclick="fotoAnterior()">❮</button>
+<button id="flechaDer" class="flechaVisor" onclick="fotoSiguiente()">❯</button>
 <h3 id="nombreVisor"></h3>
 <p id="precioVisor"></p>
 <p id="descripcionVisor" style="margin-top:10px;"></p>
