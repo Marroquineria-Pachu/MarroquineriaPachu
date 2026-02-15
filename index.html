@@ -627,6 +627,7 @@ let miniaturas = document.getElementById("miniaturas");
 let btnAgregarVisor = document.getElementById("btnAgregarVisor");
 
 visor.style.display = "flex";
+document.body.style.overflow = "hidden";
 
 imgVisor.src = p.fotos?.[0] || "";
 nombreVisor.innerText = p.nombre;
@@ -667,6 +668,7 @@ btnAgregarVisor.onclick = function(){
 
 function cerrarVisor(){
 document.getElementById("visorProducto").style.display="none";
+document.body.style.overflow = "auto"; // 🔥 ESTA LINEA
 }
 
 let carrito=JSON.parse(localStorage.getItem("carrito"))||[];
@@ -1000,7 +1002,7 @@ style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);justify-con
 <div style="background:white;padding:20px;border-radius:12px;width:90%;max-width:900px; position:relative;">
 <button onclick="cerrarVisor()" 
 style="
-position:fixed;
+position:absolute;
 top:15px;
 right:15px;
 background:white;
