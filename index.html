@@ -454,9 +454,8 @@ onclick="abrirCarrito()">
 <h3>Agregar Producto</h3>
 
 <input id="nombre" placeholder="Nombre">
-<input id="precio" type="number" placeholder="Precio">
-<input id="precioOferta" type="number" placeholder="Precio en oferta (opcional)">
-
+<input id="precio" type="text" placeholder="Precio">
+<input id="precioOferta" type="text" placeholder="Precio en oferta (opcional)">
 
 <select id="categoria">
 <option>Mochilas</option>
@@ -817,10 +816,11 @@ async function guardarProducto(fotosArray){
 
 let producto = {
   nombre: document.getElementById("nombre").value,
-  precio: Number(document.getElementById("precio").value),
-  precioOferta: document.getElementById("precioOferta").value 
-      ? Number(document.getElementById("precioOferta").value)
-      : null,
+  precio: Number(document.getElementById("precio").value.replace(/\./g,"")),
+
+precioOferta: document.getElementById("precioOferta").value
+ ? Number(document.getElementById("precioOferta").value.replace(/\./g,""))
+ : null,
   categoria: document.getElementById("categoria").value.toLowerCase().trim(),
   descripcion: document.getElementById("descripcion").value,
   fotos: fotosArray
