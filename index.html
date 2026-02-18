@@ -537,7 +537,10 @@ let productos = [];
 
 let fotosPreview = [];
 
+window.addEventListener("DOMContentLoaded", ()=>{
+
 document.getElementById("fotos").addEventListener("change", function(){
+
 
 fotosPreview = [];
 let preview = document.getElementById("previewFotos");
@@ -562,6 +565,9 @@ reader.readAsDataURL(file);
 }
 
 });
+
+});
+
 
 async function cargarProductos() {
   const querySnapshot = await getDocs(collection(db, "productos"));
