@@ -968,7 +968,9 @@ if(nuevaCategoria === null) return;
 
 let nuevoPrecio = prompt("Precio:", p.precio);
 if(nuevoPrecio === null) return;
-let nuevoPrecioOferta = prompt("Precio oferta:", p.precioOferta ?? "");
+precioOferta: nuevoPrecioOferta
+? Number(nuevoPrecioOferta.toString().replace(/\./g,""))
+: null,
 
 let nuevaDescripcion = prompt(
 "Descripción:",
@@ -990,7 +992,9 @@ if(quiereFotos){
 
 input.onchange = async function(){
 
-let nuevasFotos = [...(p.fotos || [])];
+let modo = confirm("OK = Reemplazar fotos\nCancelar = Agregar nuevas");
+
+let nuevasFotos = modo ? [] : [...(p.fotos || [])];
 
 for(let file of input.files){
 
@@ -1014,7 +1018,7 @@ reader.readAsDataURL(file);
 await updateDoc(doc(db,"productos",p.id),{
 
 categoria: nuevaCategoria.toLowerCase().trim(),
-precio: Number(nuevoPrecio),
+precio: Number(nuevoPrecio.toString().replace(/\./g,"")),
 precioOferta: nuevoPrecioOferta ? Number(nuevoPrecioOferta) : null,
 descripcion: nuevaDescripcion,
 fotos: nuevasFotos
@@ -1033,7 +1037,7 @@ input.click();
 await updateDoc(doc(db,"productos",p.id),{
 
 categoria: nuevaCategoria.toLowerCase().trim(),
-precio: Number(nuevoPrecio),
+precio: Number(nuevoPrecio.toString().replace(/\./g,"")),
 descripcion: nuevaDescripcion
 
 });
