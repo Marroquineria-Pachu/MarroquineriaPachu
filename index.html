@@ -663,15 +663,15 @@ nombreVisor.innerText = p.nombre;
 if(p.precioOferta){
 precioVisor.innerHTML = `
 <span style="text-decoration:line-through;color:gray;font-size:18px;">
-$${p.precio}
+$${Number(p.precio).toLocaleString("es-AR")}
 </span>
 <br>
 <span style="color:red;font-weight:bold;">
-🔥 $${p.precioOferta}
+🔥 $${Number(p.precioOferta).toLocaleString("es-AR")}
 </span>
 `;
 }else{
-precioVisor.innerText = "$" + p.precio;
+precioVisor.innerText = "$" + Number(p.precio).toLocaleString("es-AR");
 }
 
 descripcionVisor.innerText = p.descripcion || "";
@@ -857,15 +857,16 @@ cont.innerHTML+=`
 <h3>${p.nombre}</h3>
 ${p.precioOferta ? `
 <p style="text-decoration:line-through;color:gray;">
-$${p.precio}
+$${Number(p.precio).toLocaleString("es-AR")}
 </p>
 <p style="color:red;font-weight:bold;font-size:28px;">
-🔥 $${p.precioOferta}
+🔥 $${Number(p.precioOferta).toLocaleString("es-AR")}
 </p>
 `
 :
-`<p>$${p.precio}</p>`
+`<p>$${Number(p.precio).toLocaleString("es-AR")}</p>`
 }
+
 
 
 <button class="btn-agregar" onclick="event.stopPropagation(); agregarCarrito(${i})">
@@ -1108,11 +1109,11 @@ ${p.precioOferta ? `
 $${p.precio}
 </p>
 <p style="color:red;font-weight:bold;font-size:22px;">
-🔥 $${p.precioOferta}
+🔥 $${Number(p.precioOferta).toLocaleString("es-AR")}
 </p>
 `
-:
-`<p>$${p.precio}</p>`}
+:<p>$${Number(p.precio).toLocaleString("es-AR")}</p>
+
 
 <button class="btn-agregar" onclick="event.stopPropagation(); agregarCarrito(${i})">
 🛒 Agregar al carrito
