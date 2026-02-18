@@ -968,9 +968,8 @@ if(nuevaCategoria === null) return;
 
 let nuevoPrecio = prompt("Precio:", p.precio);
 if(nuevoPrecio === null) return;
-precioOferta: nuevoPrecioOferta
-? Number(nuevoPrecioOferta.toString().replace(/\./g,""))
-: null,
+
+let nuevoPrecioOferta = prompt("Precio oferta:", p.precioOferta || "");
 
 let nuevaDescripcion = prompt(
 "Descripción:",
@@ -978,14 +977,14 @@ p.descripcion || ""
 );
 
 
-// 👉 selector real de fotos
+// selector fotos
 let input = document.createElement("input");
 input.type = "file";
 input.multiple = true;
 input.accept = "image/*";
 
 let quiereFotos = confirm(
-"¿Querés agregar fotos nuevas?\nOK = SI\nCancelar = NO"
+"¿Querés cambiar fotos?\nOK = SI\nCancelar = NO"
 );
 
 if(quiereFotos){
@@ -1019,7 +1018,9 @@ await updateDoc(doc(db,"productos",p.id),{
 
 categoria: nuevaCategoria.toLowerCase().trim(),
 precio: Number(nuevoPrecio.toString().replace(/\./g,"")),
-precioOferta: nuevoPrecioOferta ? Number(nuevoPrecioOferta) : null,
+precioOferta: nuevoPrecioOferta
+? Number(nuevoPrecioOferta.toString().replace(/\./g,""))
+: null,
 descripcion: nuevaDescripcion,
 fotos: nuevasFotos
 
@@ -1038,6 +1039,9 @@ await updateDoc(doc(db,"productos",p.id),{
 
 categoria: nuevaCategoria.toLowerCase().trim(),
 precio: Number(nuevoPrecio.toString().replace(/\./g,"")),
+precioOferta: nuevoPrecioOferta
+? Number(nuevoPrecioOferta.toString().replace(/\./g,""))
+: null,
 descripcion: nuevaDescripcion
 
 });
@@ -1206,7 +1210,7 @@ style="
 position:absolute;
 top:15px;
 right:15px;
-background:white;
+background:white; 
 border:none;
 font-size:26px;
 border-radius:50%;
