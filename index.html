@@ -968,6 +968,7 @@ if(nuevaCategoria === null) return;
 
 let nuevoPrecio = prompt("Precio:", p.precio);
 if(nuevoPrecio === null) return;
+let nuevoPrecioOferta = prompt("Precio oferta:", p.precioOferta ?? "");
 
 let nuevaDescripcion = prompt(
 "Descripción:",
@@ -1014,7 +1015,7 @@ await updateDoc(doc(db,"productos",p.id),{
 
 categoria: nuevaCategoria.toLowerCase().trim(),
 precio: Number(nuevoPrecio),
-precioOferta: p.precioOferta || null,
+precioOferta: nuevoPrecioOferta ? Number(nuevoPrecioOferta) : null,
 descripcion: nuevaDescripcion,
 fotos: nuevasFotos
 
