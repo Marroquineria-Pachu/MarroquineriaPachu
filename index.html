@@ -1106,13 +1106,15 @@ cont.innerHTML+=`
 
 ${p.precioOferta ? `
 <p style="text-decoration:line-through;color:gray;">
-$${p.precio}
+$${Number(p.precio).toLocaleString("es-AR")}
 </p>
 <p style="color:red;font-weight:bold;font-size:22px;">
 🔥 $${Number(p.precioOferta).toLocaleString("es-AR")}
 </p>
 `
-:<p>$${Number(p.precio).toLocaleString("es-AR")}</p>
+:
+`<p>$${Number(p.precio).toLocaleString("es-AR")}</p>`
+}
 
 
 <button class="btn-agregar" onclick="event.stopPropagation(); agregarCarrito(${i})">
