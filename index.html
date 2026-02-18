@@ -527,6 +527,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const storage = getStorage(app);
+
 // variable global
 let productos = [];
 
@@ -811,20 +815,25 @@ guardarProducto(fotosPreview);
 
 }
 
-
 async function guardarProducto(fotosArray){
 
 let producto = {
   nombre: document.getElementById("nombre").value,
-  precio: Number(document.getElementById("precio").value.replace(/\./g,"")),
+precio: Number(
+  document.getElementById("precio").value.replace(/\./g,"")
+),
 
 precioOferta: document.getElementById("precioOferta").value
- ? Number(document.getElementById("precioOferta").value.replace(/\./g,""))
- : null,
+  ? Number(
+      document.getElementById("precioOferta").value.replace(/\./g,"")
+    )
+  : null,
+
   categoria: document.getElementById("categoria").value.toLowerCase().trim(),
   descripcion: document.getElementById("descripcion").value,
   fotos: fotosArray
 };
+
 
 await addDoc(collection(db, "productos"), producto);
 
@@ -1166,6 +1175,21 @@ window.enviarPedido = enviarPedido;
 window.fotoAnterior = fotoAnterior;
 window.fotoSiguiente = fotoSiguiente;
 window.cambiarFoto = cambiarFoto;
+
+// FORMATEAR PRECIO MIENTRAS ESCRIBE
+function formatearPrecioInput(input){
+
+let valor = input.value.replace(/\D/g,"");
+
+input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g,".");
+}
+
+// eventos
+document.getElementById("precio")
+.addEventListener("input", e=>formatearPrecioInput(e.target));
+
+document.getElementById("precioOferta")
+.addEventListener("input", e=>formatearPrecioInput(e.target));
 
 
 
